@@ -1,7 +1,8 @@
+package auth.trie
+
 import java.io.{File, FileInputStream}
 import java.text.SimpleDateFormat
 
-import auth.trie.Structs
 import auth.trie.Structs.Event
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
@@ -52,10 +53,8 @@ object Utils {
   def readWithTimestamps(fileName: String, seperator: String, delimiter: String): RDD[Structs.Sequence] = {
     val spark = SparkSession.builder().getOrCreate()
     spark.sparkContext.textFile(fileName).zipWithIndex map { case (line, index) =>
-      val sequence = line.split(seperator).map(event=>{
-        print(index + " ")
-        println(event)
-        Structs.Event(event.split(delimiter)(0),event.split(delimiter)(1))
+      val sequence = line.split(seperator).map(event => {
+        Structs.Event(event.split(delimiter)(0), event.split(delimiter)(1))
       })
       Structs.Sequence(index, sequence.toList)
     }
