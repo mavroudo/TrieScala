@@ -12,7 +12,9 @@ object Main {
     val fileName = args(0)
     println(fileName)
     Logger.getLogger("org").setLevel(Level.ERROR)
-    val spark = SparkSession.builder().getOrCreate()
+    val spark = SparkSession.builder()
+      .master("local[*]")
+      .getOrCreate()
     println(s"Starting Spark version ${spark.version}")
     var dataSeq: RDD[Structs.Sequence] = null
     fileName.split('.')(1) match {
@@ -24,6 +26,15 @@ object Main {
     for (sequence <- dataSeq.collect()) {
       trie.add(sequence)
     }
-//    println(trie.subtree_array('z'))
+    trie.subtree_array('z')
+
+    //read data queries from a file and execute them here
+
+
+//    println(trie.get_z())
+
+    println(trie.execute_query(List("8AJRUOSN")))
+//    println(trie.search_for_tree(List("b","0")))
+    println(trie.execute_query(List("b")))
   }
 }

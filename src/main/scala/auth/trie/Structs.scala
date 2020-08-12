@@ -8,4 +8,6 @@ object Structs {
 
   case class FindPrefix(found: Boolean, counter: Int)
 
+  case class SequenceWithNodes(order:List[String], nodes:List[TrieNode])
+
 }

@@ -13,6 +13,13 @@ class TrieNode(event_name: String, event_timestamp: String, id: Long) extends Se
     children.toList
   }
 
+  override def toString: String = {
+    val string: StringBuilder = new StringBuilder()
+    string.append("Event: " + this.event_name)
+    string.append(" List of sequences: " + this.list_of_sequences + " List of timestmaps: " + this.list_of_timestamps)
+    string.toString()
+  }
+
   def addChildren(node: TrieNode): Unit = {
     children.append(node)
   }
@@ -33,13 +40,17 @@ class TrieNode(event_name: String, event_timestamp: String, id: Long) extends Se
     counter
   }
 
-  def getChildrenSorted():List[TrieNode] ={
-    children.sortBy(x=>x.getEvent).toList
+  def getChildrenSorted(): List[TrieNode] = {
+    children.sortBy(x => x.getEvent).toList
   }
 
-  def visited(id: Long,event_timestamp: String): Unit = {
+  def visited(id: Long, event_timestamp: String): Unit = {
     counter += 1
     list_of_sequences = list_of_sequences :+ id
-    list_of_timestamps =list_of_timestamps :+ event_timestamp
+    list_of_timestamps = list_of_timestamps :+ event_timestamp
+  }
+
+  def get_list_of_sequence():List[Long]={
+    this.list_of_sequences
   }
 }
