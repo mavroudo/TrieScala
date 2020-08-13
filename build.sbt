@@ -12,9 +12,9 @@ val sparkVersion = "2.4.4"
 //to run the sbt assembly the '% "provided",' section must not be in comments
 //to debug in IDE the '% "provided",' section must be in comments
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % sparkVersion  ,
-  "org.apache.spark" %% "spark-mllib" % sparkVersion ,
-  "org.apache.spark" %% "spark-sql" % sparkVersion )
+  "org.apache.spark" %% "spark-core" % sparkVersion % "provided" ,
+  "org.apache.spark" %% "spark-mllib" % sparkVersion % "provided",
+  "org.apache.spark" %% "spark-sql" % sparkVersion % "provided")
 
 assemblyMergeStrategy in assembly := {
   case manifest if manifest.contains("MANIFEST.MF") =>
@@ -24,9 +24,13 @@ assemblyMergeStrategy in assembly := {
   case referenceOverrides if referenceOverrides.contains("reference-overrides.conf") =>
     // Keep the content for all reference-overrides.conf files
     MergeStrategy.concat
-  case x =>
+  case deckfour if deckfour.contains("deckfour") || deckfour.contains(".cache")=>
     // For all the other files, use the default sbt-assembly merge strategy
     //val oldStrategy = (assemblyMergeStrategy in assembly).value
     //oldStrategy(x)
     MergeStrategy.first
+  case x => {
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+  }
 }
