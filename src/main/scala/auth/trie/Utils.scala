@@ -1,6 +1,6 @@
 package auth.trie
 
-import java.io.{File, FileInputStream}
+import java.io.{BufferedWriter, File, FileInputStream, FileWriter}
 import java.text.SimpleDateFormat
 
 import auth.trie.Structs.Event
@@ -59,5 +59,40 @@ object Utils {
       Structs.Sequence(index, sequence.toList)
     }
   }
+
+  def read_queries(fileName:String):RDD[List[String]] = {
+    val spark = SparkSession.builder().getOrCreate()
+    spark.sparkContext.textFile(fileName).map(line => {
+      val sequence=line.split(",")
+      sequence.toList
+    })
+  }
+
+
+
+  def writeFile(filename: String, lines: List[List[(Int, List[String], List[Long])]]): Unit = {
+    val file = new File(filename)
+    val bw = new BufferedWriter(new FileWriter(file))
+    for (line <- lines.filter(_!=null)) {
+      val str:StringBuffer=new StringBuffer()
+      for (f <- line){
+        str.append(f._1.toString+","+f._2.toString()+","+f._3.toString()+"/next/")
+      }
+      str.append("\n")
+      bw.write(str.toString)
+    }
+    bw.close()
+  }
+
+  def time[R](block: => R): R = {
+    val t0 = System.nanoTime()
+    val result = block
+    val t1 = System.nanoTime()
+    println("Elapsed time: " + (t1 - t0)/1000000000 + "s")
+    result
+  }
+
+
+
 
 }

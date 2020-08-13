@@ -5,7 +5,7 @@ import scala.math.Ordered.orderingToOrdered
 import scala.math.Ordering.Implicits.seqDerivedOrdering
 
 class Trie extends Serializable {
-  private var root = new TrieNode(event_name = "*", "", id = -1)
+  private val root = new TrieNode(event_name = "*", "", id = -1)
   private var a_suffix: List[(List[String],List[TrieNode])] = _
   private var a: List[Int] = _
 
@@ -147,6 +147,9 @@ class Trie extends Serializable {
     var mid = start + (end - start + 1) / 2
     if (list(mid) == target) {
       while(list(mid)==target){
+        if (mid==0){
+          return mid
+        }
         mid-=1
       }
       mid+1
