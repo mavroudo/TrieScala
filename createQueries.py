@@ -7,6 +7,8 @@ Created on Wed Aug 12 20:41:37 2020
 """
 import sys
 import random
+from pm4py.algo.filtering.log.attributes import attributes_filter as log_attributes_filter
+from pm4py.objects.log.importer.xes import factory as xes_factory
 
 def read_txt(logfile):
     data=[]
@@ -24,6 +26,11 @@ def read_with_timestamps(logfile):
                 data+=[ev.split("/delab/")[0]]
     return list(set(data))
 
+def read_xes(logfile):
+    log=xes_factory.apply(logfile)
+    activities_all = log_attributes_filter.get_attribute_values(log, "concept:name")
+    return list(activities_all.keys())
+
 def create_queries(queryFile,num_queries,max_length_query,unique_events):
     with open(queryFile,"w") as f:
         for _ in range(num_queries):
@@ -39,7 +46,9 @@ if __name__ == "__main__":
     max_length_query=int(arguments[3])
     if logfile.split(".")[1]=="txt":
         create_queries(logfile.split(".")[0]+".queries",num_queries,max_length_query,read_txt(logfile))
-    else:
+    elif logfile.split(".")[1]=="xes":
+         create_queries(logfile.split(".")[0]+".queries",num_queries,max_length_query,read_xes(logfile))
+    else :
         create_queries(logfile.split(".")[0]+".queries",num_queries,max_length_query,read_with_timestamps(logfile))
     
     
