@@ -52,31 +52,32 @@ object Utils {
 
   def readWithTimestamps(fileName: String, seperator: String, delimiter: String): RDD[Structs.Sequence] = {
     val spark = SparkSession.builder().getOrCreate()
-    spark.sparkContext.textFile(fileName).zipWithIndex map { case (line, index) =>
-      val sequence = line.split(seperator).map(event => {
+    spark.sparkContext.textFile(fileName).map({ line =>
+      val index = line.split("::")(0).toInt
+      val events = line.split("::")(1)
+      val sequence = events.split(seperator).map(event => {
         Structs.Event(event.split(delimiter)(0), event.split(delimiter)(1))
       })
       Structs.Sequence(index, sequence.toList)
-    }
+    })
   }
 
-  def read_queries(fileName:String):RDD[List[String]] = {
+  def read_queries(fileName: String): RDD[List[String]] = {
     val spark = SparkSession.builder().getOrCreate()
     spark.sparkContext.textFile(fileName).map(line => {
-      val sequence=line.split(",")
+      val sequence = line.split(",")
       sequence.toList
     })
   }
 
 
-
   def writeFile(filename: String, lines: List[List[(Int, List[String], List[Long])]]): Unit = {
     val file = new File(filename)
     val bw = new BufferedWriter(new FileWriter(file))
-    for (line <- lines.filter(_!=null)) {
-      val str:StringBuffer=new StringBuffer()
-      for (f <- line){
-        str.append(f._1.toString+","+f._2.toString()+","+f._3.toString()+"/next/")
+    for (line <- lines.filter(_ != null)) {
+      val str: StringBuffer = new StringBuffer()
+      for (f <- line) {
+        str.append(f._1.toString + "," + f._2.toString() + "," + f._3.toString() + "/next/")
       }
       str.append("\n")
       bw.write(str.toString)
@@ -88,11 +89,9 @@ object Utils {
     val t0 = System.nanoTime()
     val result = block
     val t1 = System.nanoTime()
-    println("Elapsed time: " + (t1 - t0)/1000000000 + "s")
+    println("Elapsed time: " + (t1 - t0) / 1000000000 + "s")
     result
   }
-
-
 
 
 }
